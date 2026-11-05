@@ -6,7 +6,7 @@
     <title>TV Wahl-Infografik Studio 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -31,17 +31,17 @@
         .tech-font { font-family: 'Chakra Petch', sans-serif; }
         .pitch-card { background: #070b12; border: 1px solid rgba(255, 255, 255, 0.07); }
         
-        /* SEAMLESS INFINITE TICKER LOOP WITHOUT DEAD AIR */
+        /* Seamless Infinite Breaking News Ticker Animation */
         @keyframes tickerMove {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
         }
         .ticker-wrap { width: 100%; overflow: hidden; background: #dc2626; height: 38px; position: relative; }
         .ticker-move {
             display: inline-flex;
             white-space: nowrap;
-            animation: tickerMove 25s linear infinite;
             will-change: transform;
+            animation: tickerMove 20s linear infinite;
         }
         
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -52,15 +52,22 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- BREAKING NEWS TICKER -->
+    <!-- BREAKING NEWS TICKER (Seamless Loop) -->
     <div id="ticker-container" class="ticker-wrap flex items-center shadow-lg z-50">
-        <div class="bg-black text-white px-4 h-full flex items-center font-bold text-xs uppercase tracking-widest tech-font flex-shrink-0 z-20 border-r border-red-800">
+        <div class="bg-black text-white px-4 h-full flex items-center font-bold text-xs uppercase tracking-widest tech-font flex-shrink-0 z-10 border-r border-red-800">
             🚨 BREAKING NEWS
         </div>
         <div class="overflow-hidden flex-1 relative flex items-center">
             <div id="ticker-text" class="ticker-move text-white font-semibold text-sm tracking-wide">
-                <span id="ticker-content-1">+++ HOCHRECHNUNG 20:00: KOPF-AN-KOPF-RENNEN IN SCHLÜSSELBEZIRKEN +++ WAHLBETEILIGUNG AUF REKORDNIVEAU +++ ERSTE HOCHRECHNUNGEN ERWARTET +++ KOALITIONSVERHANDLUNGEN BEREITS ANGESTOßEN +++ &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span id="ticker-content-2">+++ HOCHRECHNUNG 20:00: KOPF-AN-KOPF-RENNEN IN SCHLÜSSELBEZIRKEN +++ WAHLBETEILIGUNG AUF REKORDNIVEAU +++ ERSTE HOCHRECHNUNGEN ERWARTET +++ KOALITIONSVERHANDLUNGEN BEREITS ANGESTOßEN +++ &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span class="inline-block px-8">+++ HOCHRECHNUNG 20:00: KOPF-AN-KOPF-RENNEN IN SCHLÜSSELBEZIRKEN +++</span>
+                <span class="inline-block px-8">WAHLBETEILIGUNG AUF REKORDNIVEAU +++</span>
+                <span class="inline-block px-8">ERSTE HOCHRECHNUNGEN ERWARTET +++</span>
+                <span class="inline-block px-8">KOALITIONSVERHANDLUNGEN BEREITS ANGESTOßEN +++</span>
+                <!-- Duplicated for seamless loop -->
+                <span class="inline-block px-8">+++ HOCHRECHNUNG 20:00: KOPF-AN-KOPF-RENNEN IN SCHLÜSSELBEZIRKEN +++</span>
+                <span class="inline-block px-8">WAHLBETEILIGUNG AUF REKORDNIVEAU +++</span>
+                <span class="inline-block px-8">ERSTE HOCHRECHNUNGEN ERWARTET +++</span>
+                <span class="inline-block px-8">KOALITIONSVERHANDLUNGEN BEREITS ANGESTOßEN +++</span>
             </div>
         </div>
     </div>
@@ -80,14 +87,7 @@
                 </div>
             </div>
 
-            <!-- CONTROLS -->
-            <div class="flex items-center flex-wrap gap-2" data-html2canvas-ignore="true">
-                <select id="preset-selector" onchange="loadPreset(this.value)" class="bg-panel border border-white/20 text-xs px-2.5 py-1.5 rounded text-cyan-400 font-semibold tech-font">
-                    <option value="">-- HISTORISCHE PRESETS --</option>
-                    <option value="de_2021">🇩🇪 Bundestagswahl 2021</option>
-                    <option value="uk_2024">🇬🇧 UK General Election 2024</option>
-                    <option value="fr_2024">🇫🇷 Frankreich Parlamentswahl 2024</option>
-                </select>
+            <div class="flex items-center gap-2" data-html2canvas-ignore="true">
                 <button onclick="setMode('parliament')" id="btn-parliament" class="px-3 py-1.5 text-xs font-semibold rounded tech-font bg-cyan-600 text-white">PARLAMENT</button>
                 <button onclick="setMode('presidential')" id="btn-presidential" class="px-3 py-1.5 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300">PRÄSIDENT</button>
                 <button onclick="setMode('us')" id="btn-us" class="px-3 py-1.5 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300">US-WAHL</button>
@@ -180,16 +180,16 @@
                 <div class="space-y-2">
                     <div>
                         <label class="text-xs text-gray-400">Flagge / Icon</label>
-                        <input type="text" id="edit-flag" class="w-full bg-black/50 border border-white/10 p-2 text-sm rounded text-white" oninput="updateMeta()">
+                        <input type="text" id="edit-flag" class="w-full bg-black/50 border border-white/10 p-2 text-sm rounded text-white" onblur="updateMeta()">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="text-xs text-gray-400">Auszählungsstand</label>
-                            <input type="text" id="edit-progress" class="w-full bg-black/50 border border-white/10 p-2 text-sm rounded text-white" oninput="updateMeta()">
+                            <input type="text" id="edit-progress" class="w-full bg-black/50 border border-white/10 p-2 text-sm rounded text-white" onblur="updateMeta()">
                         </div>
                         <div>
                             <label class="text-xs text-gray-400">Wahlbeteiligung</label>
-                            <input type="text" id="edit-turnout" class="w-full bg-black/50 border border-white/10 p-2 text-sm rounded text-white" oninput="updateMeta()">
+                            <input type="text" id="edit-turnout" class="w-full bg-black/50 border border-white/10 p-2 text-sm rounded text-white" onblur="updateMeta()">
                         </div>
                     </div>
                 </div>
@@ -197,7 +197,7 @@
 
             <div>
                 <h3 class="text-xs font-bold tech-font text-red-400 uppercase mb-2">Eilmeldungen (Ticker)</h3>
-                <textarea id="edit-ticker" rows="3" class="w-full bg-black/50 border border-white/10 p-2 text-xs rounded text-white" oninput="updateTicker()"></textarea>
+                <textarea id="edit-ticker" rows="3" class="w-full bg-black/50 border border-white/10 p-2 text-xs rounded text-white" onblur="updateTicker()"></textarea>
             </div>
 
             <div>
@@ -268,60 +268,6 @@
             { code: 'DC', votes: 3, status: 'neutral', swing: false }
         ];
 
-        const presets = {
-            de_2021: {
-                flag: '🇩🇪', progress: '100%', turnout: '76.6%',
-                ticker: '+++ BUNDESTAGSWAHL 2021: SPD WIRD STÄRKSTE KRAFT +++ AMPEL-KOALITION IM GESPRÄCH +++',
-                parties: [
-                    { id: 1, name: 'SPD', short: 'SPD', seats: 206, pct: 25.7, diff: '+5.2%', color: '#ef4444', ideology: 'Zentrum-Links\nSozialdemokratie', block: 'Regierungsblock', blockShort: 'REG', coalition: true },
-                    { id: 2, name: 'CDU/CSU', short: 'CDU', seats: 197, pct: 24.1, diff: '-8.8%', color: '#111827', ideology: 'Konservativ\nChristdemokratie', block: 'Oppositionsblock', blockShort: 'OPP', coalition: false },
-                    { id: 3, name: 'B90/Grüne', short: 'GRÜNE', seats: 118, pct: 14.8, diff: '+5.9%', color: '#22c55e', ideology: 'Grüne Politik\nPro-Europäisch', block: 'Regierungsblock', blockShort: 'REG', coalition: true },
-                    { id: 4, name: 'FDP', short: 'FDP', seats: 92, pct: 11.5, diff: '+0.7%', color: '#eab308', ideology: 'Liberalismus\nWirtschaftsliberal', block: 'Regierungsblock', blockShort: 'REG', coalition: true },
-                    { id: 5, name: 'AfD', short: 'AFD', seats: 83, pct: 10.3, diff: '-2.3%', color: '#3b82f6', ideology: 'Rechtspopulismus\nNational', block: 'Oppositionsblock', blockShort: 'OPP', coalition: false },
-                    { id: 6, name: 'Die Linke', short: 'LINKE', seats: 39, pct: 4.9, diff: '-4.3%', color: '#ec4899', ideology: 'Sozialismus\nDemokratisch', block: 'Linksblock', blockShort: 'LNK', coalition: false }
-                ]
-            },
-            uk_2024: {
-                flag: '🇬🇧', progress: '100%', turnout: '59.9%',
-                ticker: '+++ UK GENERAL ELECTION 2024: LABOUR LANDSLIDE VICTORY +++ KEIR STARMER NEW PM +++',
-                parties: [
-                    { id: 1, name: 'Labour Party', short: 'LAB', seats: 412, pct: 33.7, diff: '+1.6%', color: '#dc2626', ideology: 'Centre-Left\nSocial Democracy', block: 'Government', blockShort: 'GOV', coalition: true },
-                    { id: 2, name: 'Conservative', short: 'CON', seats: 121, pct: 23.7, diff: '-19.9%', color: '#2563eb', ideology: 'Centre-Right\nConservatism', block: 'Opposition', blockShort: 'OPP', coalition: false },
-                    { id: 3, name: 'Liberal Democrats', short: 'LD', seats: 72, pct: 12.2, diff: '+5.7%', color: '#f97316', ideology: 'Centrist\nPro-European', block: 'Centre', blockShort: 'CEN', coalition: false },
-                    { id: 4, name: 'Reform UK', short: 'REF', seats: 5, pct: 14.3, diff: '+12.3%', color: '#06b6d4', ideology: 'Right-Wing Populism', block: 'Right', blockShort: 'RGT', coalition: false }
-                ]
-            },
-            fr_2024: {
-                flag: '🇫🇷', progress: '100%', turnout: '66.6%',
-                ticker: '+++ LÉGISLATIVES 2024: NOUVEAU FRONT POPULAIRE EN TÊTE +++ ASSEMBLÉE DIVISÉE +++',
-                parties: [
-                    { id: 1, name: 'Nouveau Front Populaire', short: 'NFP', seats: 182, pct: 28.2, diff: '+3.2%', color: '#ef4444', ideology: 'Links-Bündnis\nSozial', block: 'NFP Block', blockShort: 'NFP', coalition: true },
-                    { id: 2, name: 'Ensemble (Macron)', short: 'ENS', seats: 168, pct: 24.1, diff: '-4.5%', color: '#eab308', ideology: 'Zentrum\nPro-Europäisch', block: 'Ensemble', blockShort: 'ENS', coalition: false },
-                    { id: 3, name: 'Rassemblement National', short: 'RN', seats: 143, pct: 32.1, diff: '+13.5%', color: '#1e3a8a', ideology: 'National\nRechts', block: 'RN Block', blockShort: 'RN', coalition: false }
-                ]
-            }
-        };
-
-        function loadPreset(key) {
-            if(!presets[key]) return;
-            let p = presets[key];
-            meta.flag = p.flag;
-            meta.progress = p.progress;
-            meta.turnout = p.turnout;
-            meta.ticker = p.ticker;
-            parliamentParties = JSON.parse(JSON.stringify(p.parties));
-            
-            document.getElementById('edit-flag').value = meta.flag;
-            document.getElementById('edit-progress').value = meta.progress;
-            document.getElementById('edit-turnout').value = meta.turnout;
-            document.getElementById('edit-ticker').value = meta.ticker;
-            document.getElementById('flag-display').innerText = meta.flag;
-            updateTickerUI();
-            
-            setMode('parliament');
-            renderPartyEditor();
-        }
-
         function getActiveData() {
             return currentMode === 'presidential' ? presidentialCandidates : parliamentParties;
         }
@@ -332,7 +278,6 @@
             document.getElementById('edit-progress').value = meta.progress;
             document.getElementById('edit-turnout').value = meta.turnout;
             document.getElementById('edit-ticker').value = meta.ticker;
-            renderPartyEditor();
         };
 
         function setMode(mode) {
@@ -354,20 +299,18 @@
                 document.getElementById('coalition-section').style.display = mode === 'parliament' ? 'flex' : 'none';
             }
             renderAll(true);
-            renderPartyEditor();
         }
 
         function renderAll(fullRender = false) {
             renderBarsAndIdeology();
             if (currentMode === 'parliament') {
-                if (fullRender || !parliamentChartInstance) {
-                    renderParliamentChart();
-                    renderBlocks();
-                }
+                renderParliamentChart();
+                renderBlocks();
                 renderCoalitionButtonsAndChart(fullRender);
             } else if (currentMode === 'us') {
                 renderUSGrid();
             }
+            renderPartyEditor();
         }
 
         function renderBarsAndIdeology() {
@@ -415,6 +358,7 @@
             });
         }
 
+        // SYNCED PARLIAMENT HALFCIRCLE CHART
         function renderParliamentChart() {
             const ctx = document.getElementById('parliamentChart').getContext('2d');
             if (parliamentChartInstance) parliamentChartInstance.destroy();
@@ -437,7 +381,7 @@
                     cutout: '48%',
                     responsive: true,
                     maintainAspectRatio: false,
-                    animation: false,
+                    animation: { duration: 400 },
                     plugins: { legend: { display: false } }
                 }
             });
@@ -655,13 +599,12 @@
 
         function updateTicker() {
             meta.ticker = document.getElementById('edit-ticker').value;
-            updateTickerUI();
-        }
-
-        function updateTickerUI() {
-            const content = meta.ticker + " &nbsp;&nbsp;&nbsp;&nbsp;";
-            document.getElementById('ticker-content-1').innerHTML = content;
-            document.getElementById('ticker-content-2').innerHTML = content;
+            // Re-render ticker seamlessly
+            const tickerEl = document.getElementById('ticker-text');
+            tickerEl.innerHTML = `
+                <span class="inline-block px-8">${meta.ticker}</span>
+                <span class="inline-block px-8">${meta.ticker}</span>
+            `;
         }
 
         function renderPartyEditor() {
@@ -680,36 +623,35 @@
                         <button onclick="removeParty(${p.id})" class="text-xs text-red-400 hover:text-red-300">Löschen</button>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" value="${p.name}" oninput="updateParty(${p.id}, 'name', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Name">
-                        <input type="text" value="${p.short}" oninput="updateParty(${p.id}, 'short', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Kürzel">
+                        <input type="text" value="${p.name}" onblur="updateParty(${p.id}, 'name', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Name">
+                        <input type="text" value="${p.short}" onblur="updateParty(${p.id}, 'short', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Kürzel">
                     </div>
                     ${currentMode === 'parliament' ? `
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" value="${p.block || ''}" oninput="updateParty(${p.id}, 'block', this.value)" class="bg-black/60 border border-cyan-500/30 p-1 text-xs rounded text-cyan-300" placeholder="Block-Name">
-                        <input type="text" value="${p.blockShort || ''}" oninput="updateParty(${p.id}, 'blockShort', this.value)" class="bg-black/60 border border-cyan-500/30 p-1 text-xs rounded text-cyan-300" placeholder="Block-Kürzel">
+                        <input type="text" value="${p.block || ''}" onblur="updateParty(${p.id}, 'block', this.value)" class="bg-black/60 border border-cyan-500/30 p-1 text-xs rounded text-cyan-300" placeholder="Block-Name (z.B. Regierungsblock)">
+                        <input type="text" value="${p.blockShort || ''}" onblur="updateParty(${p.id}, 'blockShort', this.value)" class="bg-black/60 border border-cyan-500/30 p-1 text-xs rounded text-cyan-300" placeholder="Block-Kürzel (z.B. REG)">
                     </div>` : ''}
                     <div class="grid grid-cols-3 gap-2">
-                        <input type="number" value="${p.seats}" oninput="updateParty(${p.id}, 'seats', parseInt(this.value) || 0)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Sitze" ${currentMode === 'presidential' ? 'disabled' : ''}>
-                        <input type="number" step="0.1" value="${p.pct}" oninput="updateParty(${p.id}, 'pct', parseFloat(this.value) || 0)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="%">
-                        <input type="text" value="${p.diff}" oninput="updateParty(${p.id}, 'diff', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="+/- %">
+                        <input type="number" value="${p.seats}" onblur="updateParty(${p.id}, 'seats', parseInt(this.value))" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Sitze" ${currentMode === 'presidential' ? 'disabled' : ''}>
+                        <input type="number" step="0.1" value="${p.pct}" onblur="updateParty(${p.id}, 'pct', parseFloat(this.value))" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="%">
+                        <input type="text" value="${p.diff}" onblur="updateParty(${p.id}, 'diff', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="+/- %">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="color" value="${p.color}" oninput="updateParty(${p.id}, 'color', this.value)" class="w-full h-7 bg-transparent border border-white/10 rounded cursor-pointer">
-                        <input type="text" value="${p.img}" oninput="updateParty(${p.id}, 'img', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Bild URL">
+                        <input type="color" value="${p.color}" onchange="updateParty(${p.id}, 'color', this.value)" class="w-full h-7 bg-transparent border border-white/10 rounded cursor-pointer">
+                        <input type="text" value="${p.img}" onblur="updateParty(${p.id}, 'img', this.value)" class="bg-black/60 border border-white/10 p-1 text-xs rounded text-white" placeholder="Bild URL (Optional)">
                     </div>
-                    <textarea oninput="updateParty(${p.id}, 'ideology', this.value)" class="w-full bg-black/60 border border-white/10 p-1 text-xs rounded text-white h-14" placeholder="Ideologie">${p.ideology}</textarea>
+                    <textarea onblur="updateParty(${p.id}, 'ideology', this.value)" class="w-full bg-black/60 border border-white/10 p-1 text-xs rounded text-white h-14" placeholder="Ideologie (mehrzeilig)">${p.ideology}</textarea>
                 `;
                 container.appendChild(item);
             });
         }
 
-        // UPDATE DATA WITHOUT RE-RENDERING THE EDITOR DOM (PREVENTS FOCUS / KEYBOARD LOSS)
         function updateParty(id, key, value) {
             const data = getActiveData();
             const p = data.find(x => x.id === id);
             if (p) {
                 p[key] = value;
-                renderAll(false);
+                renderAll(true);
             }
         }
 
@@ -718,7 +660,6 @@
             const newId = Date.now();
             data.push({ id: newId, name: 'NEUER EINTRAG', short: 'NEU', seats: currentMode === 'parliament' ? 10 : 0, pct: 5.0, diff: '+0.0%', color: '#6366f1', img: '', ideology: 'Zentrum', block: 'Neuer Block', blockShort: 'NEU', coalition: false });
             renderAll(true);
-            renderPartyEditor();
         }
 
         function removeParty(id) {
@@ -728,7 +669,6 @@
                 parliamentParties = parliamentParties.filter(p => p.id !== id);
             }
             renderAll(true);
-            renderPartyEditor();
         }
 
         function export4K() {
