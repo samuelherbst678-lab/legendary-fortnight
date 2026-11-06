@@ -6,7 +6,7 @@
     <title>TV Wahl-Infografik Studio 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -41,6 +41,14 @@
             white-space: nowrap;
             will-change: transform;
             animation: tickerMove 20s linear infinite;
+        }
+        
+        .uk-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.3s ease;
         }
         
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -86,6 +94,12 @@
             </div>
 
             <div class="flex items-center gap-2" data-html2canvas-ignore="true">
+                <!-- PARLIAMENT LAYOUT SWITCHER -->
+                <button onclick="setParliamentStyle('arc')" id="btn-style-arc" class="px-2.5 py-1 text-xs font-semibold rounded tech-font bg-cyan-600 text-white border border-cyan-400/50">⭕ HALBKREIS</button>
+                <button onclick="setParliamentStyle('westminster')" id="btn-style-uk" class="px-2.5 py-1 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300">🇬🇧 WESTMINSTER</button>
+                
+                <div class="h-4 w-[1px] bg-white/20 mx-1"></div>
+
                 <button onclick="setMode('parliament')" id="btn-parliament" class="px-3 py-1.5 text-xs font-semibold rounded tech-font bg-cyan-600 text-white">PARLAMENT</button>
                 <button onclick="setMode('presidential')" id="btn-presidential" class="px-3 py-1.5 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300">PRÄSIDENT</button>
                 <button onclick="setMode('us')" id="btn-us" class="px-3 py-1.5 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300">US-WAHL</button>
@@ -108,8 +122,40 @@
                 <h3 class="text-sm font-semibold tech-font text-gray-400 mb-2 uppercase tracking-widest">Gesamte Sitzverteilung & Block-Mehrheiten</h3>
                 <div id="block-container" class="flex gap-4 mb-4 flex-wrap justify-center w-full max-w-3xl"></div>
                 
-                <div class="relative w-[340px] h-[180px] flex justify-center items-center">
+                <!-- ARC LAYOUT CONTAINER -->
+                <div id="main-arc-wrapper" class="relative w-[340px] h-[180px] flex justify-center items-center">
                     <canvas id="parliamentChart"></canvas>
+                </div>
+
+                <!-- WESTMINSTER UK COMMONS GRID CONTAINER -->
+                <div id="main-westminster-wrapper" class="hidden flex-col items-center justify-center w-full max-w-4xl py-4">
+                    <div class="flex items-center gap-4 w-full">
+                        <!-- Speaker Chair -->
+                        <div class="flex flex-col items-center justify-center border border-white/20 p-2 rounded bg-white/5">
+                            <div class="w-4 h-4 rounded-full bg-amber-400 mb-1 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></div>
+                            <span class="text-[9px] font-bold tech-font text-gray-400 uppercase">SPEAKER</span>
+                        </div>
+                        
+                        <!-- Benches Grid -->
+                        <div class="flex-1 flex flex-col gap-4">
+                            <!-- Government (Top Bench) -->
+                            <div class="flex flex-col gap-1 bg-white/5 p-3 rounded border border-white/10">
+                                <span class="text-[10px] font-bold tech-font text-cyan-400 tracking-wider">REGIERUNGS-BANKS (GOVERNMENT BENCH)</span>
+                                <div id="uk-main-gov-grid" class="flex flex-wrap gap-1 items-center"></div>
+                            </div>
+                            
+                            <!-- Middle Aisle -->
+                            <div class="w-full h-0.5 bg-red-600/40 relative flex justify-center items-center">
+                                <span class="text-[8px] bg-pitch px-2 text-gray-500 font-bold tech-font">WESTMINSTER AISLE</span>
+                            </div>
+
+                            <!-- Opposition (Bottom Bench) -->
+                            <div class="flex flex-col gap-1 bg-white/5 p-3 rounded border border-white/10">
+                                <span class="text-[10px] font-bold tech-font text-red-400 tracking-wider">OPPOSITIONS-BANKS (OPPOSITION BENCH)</span>
+                                <div id="uk-main-opp-grid" class="flex flex-wrap gap-1 items-center"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -131,8 +177,33 @@
 
                 <div class="flex flex-col items-center justify-center w-full pt-2 border-t border-white/10">
                     <span class="text-xs font-bold tech-font text-gray-400 mb-3 uppercase tracking-wider">Koalitions-Sitzverteilung</span>
-                    <div class="relative w-[340px] h-[180px] flex justify-center items-center">
+                    
+                    <!-- COALITION ARC CONTAINER -->
+                    <div id="coalition-arc-wrapper" class="relative w-[340px] h-[180px] flex justify-center items-center">
                         <canvas id="coalitionChart"></canvas>
+                    </div>
+
+                    <!-- COALITION WESTMINSTER CONTAINER -->
+                    <div id="coalition-westminster-wrapper" class="hidden flex-col items-center justify-center w-full max-w-4xl py-4">
+                        <div class="flex items-center gap-4 w-full">
+                            <div class="flex flex-col items-center justify-center border border-white/20 p-2 rounded bg-white/5">
+                                <div class="w-4 h-4 rounded-full bg-amber-400 mb-1 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></div>
+                                <span class="text-[9px] font-bold tech-font text-gray-400 uppercase">SPEAKER</span>
+                            </div>
+                            <div class="flex-1 flex flex-col gap-4">
+                                <div class="flex flex-col gap-1 bg-white/5 p-3 rounded border border-white/10">
+                                    <span class="text-[10px] font-bold tech-font text-emerald-400 tracking-wider">GEWÄHLTE KOALITION (GOVERNMENT)</span>
+                                    <div id="uk-coalition-gov-grid" class="flex flex-wrap gap-1 items-center"></div>
+                                </div>
+                                <div class="w-full h-0.5 bg-red-600/40 relative flex justify-center items-center">
+                                    <span class="text-[8px] bg-pitch px-2 text-gray-500 font-bold tech-font">WESTMINSTER AISLE</span>
+                                </div>
+                                <div class="flex flex-col gap-1 bg-white/5 p-3 rounded border border-white/10">
+                                    <span class="text-[10px] font-bold tech-font text-gray-400 tracking-wider">RESTLICHE PARTEIEN / OPPOSITION</span>
+                                    <div id="uk-coalition-opp-grid" class="flex flex-wrap gap-1 items-center"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -210,6 +281,7 @@
 
     <script>
         let currentMode = 'parliament';
+        let parliamentStyle = 'arc'; // 'arc' or 'westminster'
         let parliamentChartInstance = null;
         let coalitionChartInstance = null;
 
@@ -278,6 +350,31 @@
             document.getElementById('edit-ticker').value = meta.ticker;
         };
 
+        function setParliamentStyle(style) {
+            parliamentStyle = style;
+            document.getElementById('btn-style-arc').className = style === 'arc' ? 'px-2.5 py-1 text-xs font-semibold rounded tech-font bg-cyan-600 text-white border border-cyan-400/50' : 'px-2.5 py-1 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300';
+            document.getElementById('btn-style-uk').className = style === 'westminster' ? 'px-2.5 py-1 text-xs font-semibold rounded tech-font bg-cyan-600 text-white border border-cyan-400/50' : 'px-2.5 py-1 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300';
+            
+            if (style === 'arc') {
+                document.getElementById('main-arc-wrapper').classList.remove('hidden');
+                document.getElementById('main-westminster-wrapper').classList.add('hidden');
+                document.getElementById('main-westminster-wrapper').classList.remove('flex');
+
+                document.getElementById('coalition-arc-wrapper').classList.remove('hidden');
+                document.getElementById('coalition-westminster-wrapper').classList.add('hidden');
+                document.getElementById('coalition-westminster-wrapper').classList.remove('flex');
+            } else {
+                document.getElementById('main-arc-wrapper').classList.add('hidden');
+                document.getElementById('main-westminster-wrapper').classList.remove('hidden');
+                document.getElementById('main-westminster-wrapper').classList.add('flex');
+
+                document.getElementById('coalition-arc-wrapper').classList.add('hidden');
+                document.getElementById('coalition-westminster-wrapper').classList.remove('hidden');
+                document.getElementById('coalition-westminster-wrapper').classList.add('flex');
+            }
+            renderAll(true);
+        }
+
         function setMode(mode) {
             currentMode = mode;
             document.getElementById('btn-parliament').className = mode === 'parliament' ? 'px-3 py-1.5 text-xs font-semibold rounded tech-font bg-cyan-600 text-white' : 'px-3 py-1.5 text-xs font-semibold rounded tech-font bg-white/10 hover:bg-white/20 text-gray-300';
@@ -302,13 +399,16 @@
         function renderAll(fullRender = false) {
             renderBarsAndIdeology();
             if (currentMode === 'parliament') {
-                renderParliamentChart(fullRender);
+                if (parliamentStyle === 'arc') {
+                    renderParliamentChart(fullRender);
+                } else {
+                    renderWestminsterMainGrid();
+                }
                 renderBlocks();
                 renderCoalitionButtonsAndChart(fullRender);
             } else if (currentMode === 'us') {
                 renderUSGrid();
             }
-            // Wir aktualisieren die Editor-Liste nur bei fullRender, damit der Tastaturfokus nicht verloren geht
             if (fullRender || !document.activeElement.matches('#editor-parties input, #editor-parties textarea')) {
                 renderPartyEditor();
             }
@@ -356,6 +456,39 @@
                     </div>
                 `;
                 ideologyContainer.appendChild(ideologyItem);
+            });
+        }
+
+        // WESTMINSTER UK COMMONS GRID RENDER (MAIN)
+        function renderWestminsterMainGrid() {
+            const govGrid = document.getElementById('uk-main-gov-grid');
+            const oppGrid = document.getElementById('uk-main-opp-grid');
+            govGrid.innerHTML = '';
+            oppGrid.innerHTML = '';
+
+            // Group 1: Government (Selected Coalitions or Strongest Block)
+            const sorted = [...parliamentParties].sort((a, b) => b.seats - a.seats);
+            const govParties = sorted.filter(p => p.coalition);
+            const oppParties = sorted.filter(p => !p.coalition);
+
+            govParties.forEach(p => {
+                for (let i = 0; i < p.seats; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'uk-dot shadow-sm';
+                    dot.style.backgroundColor = p.color;
+                    dot.title = `${p.short} (${p.seats} Sitze)`;
+                    govGrid.appendChild(dot);
+                }
+            });
+
+            oppParties.forEach(p => {
+                for (let i = 0; i < p.seats; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'uk-dot shadow-sm';
+                    dot.style.backgroundColor = p.color;
+                    dot.title = `${p.short} (${p.seats} Sitze)`;
+                    oppGrid.appendChild(dot);
+                }
             });
         }
 
@@ -485,36 +618,63 @@
                 statusEl.innerText = `KEINE MEHRHEIT (${totalSelectedSeats} / ${majorityThreshold} Sitze)`;
             }
 
-            const ctx = document.getElementById('coalitionChart').getContext('2d');
+            // ARC CHART COALITION
+            if (parliamentStyle === 'arc') {
+                const ctx = document.getElementById('coalitionChart').getContext('2d');
 
-            if (!coalitionChartInstance || fullRebuild) {
-                if (coalitionChartInstance) coalitionChartInstance.destroy();
-                coalitionChartInstance = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        datasets: [{
-                            data: cDataSeats,
-                            backgroundColor: cColors,
-                            borderWidth: 0,
-                        }]
-                    },
-                    options: {
-                        rotation: -90,
-                        circumference: 180,
-                        cutout: '48%',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        animation: {
-                            duration: 1000,
-                            easing: 'easeOutCubic'
+                if (!coalitionChartInstance || fullRebuild) {
+                    if (coalitionChartInstance) coalitionChartInstance.destroy();
+                    coalitionChartInstance = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            datasets: [{
+                                data: cDataSeats,
+                                backgroundColor: cColors,
+                                borderWidth: 0,
+                            }]
                         },
-                        plugins: { legend: { display: false } }
+                        options: {
+                            rotation: -90,
+                            circumference: 180,
+                            cutout: '48%',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: {
+                                duration: 1000,
+                                easing: 'easeOutCubic'
+                            },
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                } else {
+                    coalitionChartInstance.data.datasets[0].data = cDataSeats;
+                    coalitionChartInstance.data.datasets[0].backgroundColor = cColors;
+                    coalitionChartInstance.update();
+                }
+            } else {
+                // WESTMINSTER UK COALITION RENDER
+                const cGovGrid = document.getElementById('uk-coalition-gov-grid');
+                const cOppGrid = document.getElementById('uk-coalition-opp-grid');
+                cGovGrid.innerHTML = '';
+                cOppGrid.innerHTML = '';
+
+                parliamentParties.forEach(p => {
+                    if (p.coalition) {
+                        for (let i = 0; i < p.seats; i++) {
+                            const dot = document.createElement('div');
+                            dot.className = 'uk-dot shadow-sm';
+                            dot.style.backgroundColor = p.color;
+                            cGovGrid.appendChild(dot);
+                        }
+                    } else {
+                        for (let i = 0; i < p.seats; i++) {
+                            const dot = document.createElement('div');
+                            dot.className = 'uk-dot shadow-sm opacity-40';
+                            dot.style.backgroundColor = p.color;
+                            cOppGrid.appendChild(dot);
+                        }
                     }
                 });
-            } else {
-                coalitionChartInstance.data.datasets[0].data = cDataSeats;
-                coalitionChartInstance.data.datasets[0].backgroundColor = cColors;
-                coalitionChartInstance.update();
             }
         }
 
@@ -655,10 +815,10 @@
             const p = data.find(x => x.id === id);
             if (p) {
                 p.color = color;
-                // Live Update ohne Re-Renders der Editor-Box, verhindert das Schließen des Fokus!
                 renderBarsAndIdeology();
                 if (currentMode === 'parliament') {
-                    renderParliamentChart(false);
+                    if (parliamentStyle === 'arc') renderParliamentChart(false);
+                    else renderWestminsterMainGrid();
                     renderBlocks();
                     renderCoalitionButtonsAndChart(false);
                 }
